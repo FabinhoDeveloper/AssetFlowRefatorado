@@ -1,0 +1,468 @@
+<head>
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+    }
+    
+    .sidebar {
+      width: 280px;
+      background-color: #212529;
+      color: white;
+      min-height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 100;
+      transition: all 0.3s;
+    }
+    
+    .sidebar-header {
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+    
+    .sidebar-menu {
+      padding: 0;
+      list-style: none;
+    }
+    
+    .sidebar-menu li {
+      margin-bottom: 5px;
+    }
+    
+    .sidebar-menu a {
+      display: block;
+      padding: 12px 20px;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    
+    .sidebar-menu a:hover, .sidebar-menu a.active {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+    
+    .sidebar-menu i {
+      margin-right: 10px;
+    }
+    
+    .content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    
+    .navbar {
+      background-color: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-primary {
+      background-color: #4a6bff;
+      border-color: #4a6bff;
+    }
+    
+    .btn-primary:hover {
+      background-color: #2541b8;
+      border-color: #2541b8;
+    }
+    
+    .item-card {
+      transition: all 0.3s;
+    }
+    
+    .item-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .table th {
+      font-weight: 600;
+      color: #495057;
+    }
+    
+    .table-view-switch .btn {
+      border-radius: 0;
+    }
+    
+    .table-view-switch .btn:first-child {
+      border-top-left-radius: 0.25rem;
+      border-bottom-left-radius: 0.25rem;
+    }
+    
+    .table-view-switch .btn:last-child {
+      border-top-right-radius: 0.25rem;
+      border-bottom-right-radius: 0.25rem;
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar {
+        margin-left: -280px;
+      }
+      .sidebar.active {
+        margin-left: 0;
+      }
+      .content {
+        margin-left: 0;
+      }
+      .content.active {
+        margin-left: 280px;
+      }
+    }
+  </style>
+</head>
+
+  <!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+<div class="sidebar-header">
+    <h3>AssetFlow</h3>
+</div>
+<ul class="sidebar-menu">
+    <li>
+    <a href="/admin/workspaces" class="active">
+        <i class="bi bi-grid-3x3-gap"></i> Workspaces
+    </a>
+    </li>
+    <li>
+    <a href="/admin/perfil">
+        <i class="bi bi-person"></i> Perfil
+    </a>
+    </li>
+    <li>
+    <li class="mt-5">
+    <a href="/login/logout">
+        <i class="bi bi-box-arrow-left"></i> Logout
+    </a>
+    </li>
+</ul>
+</div>
+
+<!-- Content -->
+<div class="content" id="content">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light mb-4">
+    <div class="container-fluid">
+    <button class="btn btn-outline-secondary" id="sidebarToggle">
+        <i class="bi bi-list">Menu</i>
+    </button>
+    <div class="ms-auto d-flex align-items-center">
+        <div class="dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <span><% usuario.primeiroNome %></span>
+        </a>
+        </div>
+    </div>
+    </div>
+</nav>
+
+<!-- Workspace Items Content -->
+<div class="container-fluid">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0"><%= workspace.nome %></h1>
+        <p class="text-muted"><%= workspace.descricao %></p>
+    </div>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
+        <i class="bi bi-plus-lg"></i> Adicionar Item
+    </button>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <div class="row g-3 align-items-center">
+        
+            <div class="col-md-1">
+                <div class="btn-group table-view-switch" role="group">
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>    
+
+    <!-- List View (Hidden by default) -->
+    <div id="listView">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+            <thead class="bg-light">
+                <tr>
+                <th scope="col">Nome do Item</th>
+                <th scope="col">Categoria</th>
+                <th scope="col">Número de Série</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Localidade</th>
+                <th scope="col">Valor</th>
+                <th scope="col">Data de Aquisição</th>
+                <th scope="col" style="width: 100px;">Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (itens.length > 0) { %>
+                    <% itens.forEach((item) => { %>
+                        <tr data-item-id="<%= item.id %>">
+                        <td><%= item.nome %></td>
+                        <td><span class="badge bg-primary"><%= item.categoria %></span></td>
+                        <td><%= item.numeroSerie %></td>
+                        <td><%= item.descricao %></td>
+                        <td><%= item.local %></td>
+                        <td>R$ <%= item.valor %></td>
+                        <td><%= new Date(item.dataDeCompra).toLocaleDateString('pt-BR') %></td>
+                        <td>
+                            <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editItemModal">
+                                <i class="bi bi-pencil">Editar</i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="excluirItem('<%= item.id %>')">
+                                <i class="bi bi-trash">Excluir</i>
+                            </button>
+                            </div>
+                        </td>
+                        </tr>
+                        <tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="9" class="text-center">Nenhum item encontrado.</td>
+                    </tr>
+                <% } %>
+            </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>
+</div>
+
+<!-- Add Item Modal -->
+<div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addItemModalLabel">Adicionar Novo Item</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form id="addItemForm" method="post" action="/admin/itens/cadastro/<%= workspace.id %>">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                <label for="itemName" class="form-label">Nome do Item</label>
+                <input type="text" class="form-control" id="nome" name="nome" required>
+                </div>
+                <div class="col-md-6">
+                <label for="category" class="form-label">Categoria</label>
+                <select class="form-select" id="categoria" name="categoria" required>
+                    <option value="" selected disabled>Selecione uma categoria</option>
+                    <option value="Computador">Computador</option>
+                    <option value="Periférico">Periférico</option>
+                    <option value="Software">Software</option>
+                    <option value="Rede">Rede</option>
+                    <option value="Outro">Outro</option>
+                </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                <label for="serialNumber" class="form-label">Número de Série</label>
+                <input type="text" class="form-control" id="numeroSerie" name="numeroSerie" required>
+                </div>
+                <div class="col-md-6">
+                <label for="value" class="form-label">Valor</label>
+                <div class="input-group">
+                    <span class="input-group-text">R$</span>
+                    <input type="text" class="form-control" id="valor" name="valor" step="0.01" min="0">
+                </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                <label for="location" class="form-label">Localidade</label>
+                <input type="text" class="form-control" id="local" name="local" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Descrição</label>
+                <textarea class="form-control" id="descricao" name="descricao" rows="3"></textarea>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                <label for="purchaseDate" class="form-label">Data de Aquisição</label>
+                <input type="date" class="date form-control" id="dataDeCompra" name="dataDeCompra" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Adicionar Item</button>
+            </div>
+        </form>
+    </div> 
+    </div>
+</div>
+</div>
+
+<!-- Edit Item Modal -->
+<div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="editItemModalLabel">Editar Item</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form id="editItemForm">
+            <input type="hidden" id="editItemId">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                <label for="editItemName" class="form-label">Nome do Item</label>
+                <input type="text" class="form-control" id="editItemName">
+                </div>
+                <div class="col-md-6">
+                <label for="editItemCategory" class="form-label">Categoria</label>
+                <select class="form-select" id="editItemCategory">
+                    <option value="" selected disabled>Selecione uma categoria</option>
+                    <option value="Computador">Computador</option>
+                    <option value="Periférico">Periférico</option>
+                    <option value="Software">Software</option>
+                    <option value="Rede">Rede</option>
+                    <option value="Outro">Outro</option>
+                </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                <label for="editItemSerial" class="form-label">Número de Série</label>
+                <input type="text" class="form-control" id="editItemSerial">
+                </div>
+                <div class="col-md-6">
+                <label for="editItemValue" class="form-label">Valor</label>
+                <div class="input-group">
+                    <span class="input-group-text">R$</span>
+                    <input type="number" class="form-control" id="editItemValue" step="0.01" min="0">
+                </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                <label for="editItemAssigned" class="form-label">Atribuído A</label>
+                <input type="text" class="form-control" id="editItemAssigned">
+                </div>
+                <div class="col-md-6">
+                <label for="editItemLocation" class="form-label">Localidade</label>
+                <input type="text" class="form-control" id="editItemLocation">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="editItemDescription" class="form-label">Descrição</label>
+                <textarea class="form-control" id="editItemDescription" rows="3"></textarea>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                <label for="editItemPurchaseDate" class="form-label">Data de Aquisição</label>
+                <input type="date" class="date form-control" id="editItemPurchaseDate">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="updateItemBtn">Atualizar Item</button>
+    </div>
+    </div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+  // Esconder Sidebar
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.getElementById('content').classList.toggle('active');
+});
+
+// Quando o modal de edição é aberto, preenche com os dados do item
+document.querySelectorAll('[data-bs-target="#editItemModal"]').forEach(button => {
+    button.addEventListener('click', function() {
+        const row = this.closest('tr');
+        const itemId = row.getAttribute('data-item-id');
+
+        document.getElementById('editItemId').value = itemId;
+        document.getElementById('editItemName').value = row.cells[0].textContent;
+        document.getElementById('editItemCategory').value = row.cells[1].textContent.trim();
+        document.getElementById('editItemSerial').value = row.cells[2].textContent;
+        document.getElementById('editItemDescription').value = row.cells[3].textContent;
+        document.getElementById('editItemAssigned').value = row.cells[4].textContent;
+        document.getElementById('editItemLocation').value = row.cells[5].textContent;
+        document.getElementById('editItemValue').value = row.cells[6].textContent.replace('R$ ', '').trim();
+        
+        const displayedDate = row.cells[7].textContent;
+        document.getElementById('editItemPurchaseDate').value = convertToDateInputFormat(displayedDate)});
+});
+
+// Nova função para formatar data ISO para input date
+function convertToDateInputFormat(displayedDate) {    
+    const [day, month, year] = displayedDate.split('/');
+    return `${year}-${month}-${day}`;
+}
+
+// Atualizar item
+document.getElementById("updateItemBtn").addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    const itemId = document.getElementById('editItemId').value;
+
+    const itemData = {
+        itemName: document.getElementById('editItemName').value,
+        category: document.getElementById('editItemCategory').value,
+        serialNumber: document.getElementById('editItemSerial').value,
+        value: document.getElementById('editItemValue').value,
+        assignedTo: document.getElementById('editItemAssigned').value,
+        location: document.getElementById('editItemLocation').value,
+        description: document.getElementById('editItemDescription').value,
+        purchaseDate: document.getElementById('editItemPurchaseDate').value
+    };
+    
+    try {
+        const res = await axios.put(`/item/${itemId}`, itemData);
+        if (res.data.success) {
+            alert("Item atualizado com sucesso!");
+            window.location.reload();
+        } else {
+            alert("Erro ao atualizar item: " + (res.data.message || ''));
+        }
+    } catch (err) {
+        console.error('Erro ao atualizar:', err);
+        alert("Erro ao atualizar item! Detalhes no console.");
+    }
+});
+
+// Deletar Item
+async function excluirItem(id) {
+  if (!confirm('Tem certeza que deseja excluir este item?')) return;
+
+  try {
+    const res = await axios.delete(`/item/${id}`);
+
+    if (res.data.success) {
+      alert('Item excluído com sucesso!');
+      window.location.reload();
+    } else {
+      alert('Erro ao excluir o item.');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao excluir o item.');
+  }
+}
+
+</script>

@@ -1,0 +1,60 @@
+<style>
+    body {
+        background-color: #f8f9fa;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+    }
+    .login-container {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    .btn-primary {
+        background-color: #4a6bff;
+        border-color: #4a6bff;
+    }
+    .btn-primary:hover {
+        background-color: #2541b8;
+        border-color: #2541b8;
+    }
+    .logo {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #4a6bff;
+        text-decoration: none;
+    }
+</style>
+
+<div class="container login-container">
+    <div class="text-center mb-4">
+        <a href="/" class="logo">AssetFlow</a>
+    </div>
+    <div class="card">
+        <div class="card-body p-4 p-md-5">
+        <h2 class="text-center mb-4">Entre na sua conta</h2>
+        <form id="loginForm" action="/login/login" method="POST">
+            <div class="mb-3">
+            <label for="email" class="form-label">Endereço de e-mail</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+            <label for="password" class="form-label">Senha</label>
+            <input type="password" class="form-control" id="password" name="senha" required>
+            </div>
+            <div class="mb-3 form-check">
+            </div>
+            <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
+            </div>
+        </form>
+        </div>
+    </div>
+    <div class="text-center mt-4">
+        <p>Não tem uma conta? <a href="/login/cadastro" class="text-decoration-none">Cadastre-se</a></p>
+        <p><a href="/" class="text-decoration-none">Voltar para o início</a></p>
+    </div>
+</div>
