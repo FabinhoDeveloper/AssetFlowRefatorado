@@ -35,7 +35,7 @@ source/
 
 1. *Clone o repositório*
     bash
-    git clone https://github.com/seuusuario/asset-flow.git
+    git clone https://github.com/FabinhoDeveloper/AssetFlowRefatorado.git
     cd asset-flow
     
 
