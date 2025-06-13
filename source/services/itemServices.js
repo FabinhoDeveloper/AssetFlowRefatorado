@@ -12,12 +12,15 @@ async function listarItensPorWorkspace(workspaceId) {
 }
 
 async function criarItem(workspaceId, nome, descricao, categoria, numeroSerie, local, valor, dataDeCompra) {
+    const [ano, mes, dia] = dataDeCompra.split('-');
+    const dataCorrigida = new Date(Number(ano), Number(mes) - 1, Number(dia));
+    
     const novoItem = await prisma.item.create({
         data: {
             nome,
             categoria,
             numeroSerie,
-            dataDeCompra: new Date(dataDeCompra),
+            dataDeCompra: dataCorrigida,
             valor,
             local,
             descricao,
@@ -28,14 +31,6 @@ async function criarItem(workspaceId, nome, descricao, categoria, numeroSerie, l
     console.log(novoItem);
 
     return novoItem;
-}
-
-async function excluirItem(id) {
-    const item = await prisma.item.delete({
-        where: { id }
-    });
-
-    return item
 }
 
 async function atualizarItem(id, nome, descricao, local, categoria, numeroSerie, valor, dataDeCompra) {
@@ -58,9 +53,38 @@ async function atualizarItem(id, nome, descricao, local, categoria, numeroSerie,
     return item;
 }
 
+async function registrarExclusao(itemId, motivo, responsavel) {
+    try {
+        const item = await prisma.item.findUnique({
+            where: { id: itemId }
+        })
+
+        const exclusao = await prisma.exclusao.create({
+            data: {
+                nomeItem: item.nome,
+                categoriaItem: item.categoria,
+                numeroSerieItem: item.numeroSerie,
+                motivo,
+                responsavel,
+                workspaceId: item.workspaceId,
+                dataDeExclusao: new Date()
+            }
+        })
+
+        const itemExcluido = await prisma.item.delete({
+            where: { id: itemId }
+        })
+
+        return exclusao
+    } catch (error) {
+        console.error('Erro ao registrar exclusão:', error);
+        throw new Error('Não foi possível registrar a exclusão do item.');
+    }
+}
+
 module.exports = {
     listarItensPorWorkspace,
     criarItem,
-    excluirItem,
-    atualizarItem
+    atualizarItem,
+    registrarExclusao
 };

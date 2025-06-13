@@ -31,18 +31,32 @@ model Workspace {
 
   usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   itens Item[]
+  exclusoes Exclusao[]
 }
 
 model Item {
-  id String @id @default(uuid())
-  nome String
-  categoria String
-  numeroSerie String
-  valor String
-  local String
-  descricao String
+  id           String     @id @default(uuid())
+  nome         String
+  categoria    String
+  numeroSerie  String
+  valor        String
+  local        String
+  descricao    String
   dataDeCompra DateTime
-  workspaceId String
-  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  workspaceId  String
+  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: NoAction)
 }
 
+model Exclusao {
+  id             String   @id @default(uuid())  
+  nomeItem String
+  categoriaItem String
+  numeroSerieItem String
+  motivo         String
+  responsavel    String
+  dataDeExclusao DateTime
+  workspaceId    String
+
+  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: NoAction)
+}

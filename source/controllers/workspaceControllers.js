@@ -1,5 +1,6 @@
 const { Router } = require("express")
 const workspaceService = require("../services/workspaceServices.js")
+const exclusaoService = require("../services/exclusaoServices.js")
 const router = Router()
 
 router.get("/", async (req, res) => {
@@ -7,7 +8,7 @@ router.get("/", async (req, res) => {
 
     res.render("admin/workspaces", {
         titulo: "Painel Administrativo - Workspaces",
-        workspaces
+        workspaces,
     })
 })
 
