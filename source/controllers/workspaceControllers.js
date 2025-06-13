@@ -4,7 +4,7 @@ const exclusaoService = require("../services/exclusaoServices.js")
 const router = Router()
 
 router.get("/", async (req, res) => {
-    const workspaces = await workspaceService.listarWorkspacesPorUsuario(req.session.usuarioId)
+    const workspaces = await workspaceService.listarWorkspacesPorUsuario(req.session.usuario.id)
 
     res.render("admin/workspaces", {
         titulo: "Painel Administrativo - Workspaces",

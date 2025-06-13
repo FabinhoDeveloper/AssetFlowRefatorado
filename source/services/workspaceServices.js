@@ -12,6 +12,10 @@ async function listarWorkspacePorId(id) {
 }
 
 async function listarWorkspacesPorUsuario(id) {
+    const usuario = await prisma.usuario.findUnique({
+        where: { id }
+    })
+
     const workspaces = await prisma.workspace.findMany({
         where: {
             usuarioId: id
