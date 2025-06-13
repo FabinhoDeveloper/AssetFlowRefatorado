@@ -45,7 +45,7 @@ model Item {
   dataDeCompra DateTime
 
   workspaceId  String
-  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: NoAction)
+  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 }
 
 model Exclusao {
@@ -58,5 +58,5 @@ model Exclusao {
   dataDeExclusao DateTime
   workspaceId    String
 
-  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: NoAction)
+  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 }

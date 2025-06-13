@@ -9,6 +9,11 @@ router.get("/", (req, res) => {
     })
 })
 
+router.get("/logout", (req, res) => {
+    req.session.destroy()
+    res.redirect("/")
+})
+
 router.post("/login", async (req, res) => {
     const {email, senha} = req.body
     
