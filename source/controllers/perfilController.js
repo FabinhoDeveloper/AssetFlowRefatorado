@@ -15,7 +15,7 @@ router.post("/editar", async (req, res) => {
     try {
         const usuarioAtualizado = await perfilService.atualizarPerfil(id, primeiroNome, ultimoNome, email)
         
-        req.session.usuario = usuarioAtualizado;
+        req.session.usuario = usuarioAtualizado
         req.flash("sucesso", "Perfil atualizado com sucesso!")
         res.redirect("/admin/perfil")
     } catch (error) {
