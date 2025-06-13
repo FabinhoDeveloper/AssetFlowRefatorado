@@ -36,7 +36,6 @@ router.post("/editar", async (req, res) => {
     try {
         const workspace = await workspaceService.atualizarWorkspace(workspaceId, nome, descricao, cor)
         
-        console.log({ mensagem: 'workspace recebido no controller', workspace })
         req.flash("sucesso", "Workspace atualizado com sucesso!")
         res.redirect("/admin/workspaces")
     } catch (error) {
@@ -45,13 +44,14 @@ router.post("/editar", async (req, res) => {
     }
 })
 
-router.post("/excluir/:workspaceId", async (req, res) => {
+router.delete("/excluir/:workspaceId", async (req, res) => {
     const { workspaceId } = req.params
 
+    console.log({ mensagem: 'workspace recebido no controller', workspaceId })
     try {
-        await workspaceService.excluirWorkspace(workspaceId)
-        req.flash("sucesso", "Workspace excluído com sucesso!")
-        res.redirect("/admin/workspaces")
+        const workspace = await workspaceService.excluirWorkspace(workspaceId)
+        
+        res.status(200).send({ mensagem: "Workspace excluído com sucesso!" })
     } catch (error) {
         req.flash("erro", error.message)
         res.redirect("/admin/workspaces")

@@ -16,10 +16,10 @@ router.get("/:workspaceId", async (req, res) => {
     })
 })
 
-router.post("/admin/editar/:itemId", async (req, res) => {
-    const { itemId } = req.params
-    const { nome, descricao, categoria, numeroSerie, local, valor, dataDeCompra } = req.body
+router.post("/editar", async (req, res) => {
+    const { itemId, nome, descricao, categoria, numeroSerie, local, valor, dataDeCompra } = req.body
 
+    console.log( itemId, nome, descricao, categoria, numeroSerie, local, valor, dataDeCompra )
     try {
         const item = await itemService.atualizarItem(itemId, nome, descricao, local, categoria, numeroSerie, valor, dataDeCompra)
 
@@ -27,7 +27,7 @@ router.post("/admin/editar/:itemId", async (req, res) => {
         res.redirect(`/admin/itens/${item.workspaceId}`)
     } catch (error) {
         req.flash("erro", error.message)
-        res.redirect(`/admin/itens/${item.workspaceId}`)
+        res.redirect(`/admin/workspaces`)
     }
 })
 
@@ -45,5 +45,6 @@ router.post("/cadastro/:workspaceId", async (req, res) => {
         res.redirect(`/admin/itens/${workspaceId}`)
     }
 })
+
 
 module.exports = router

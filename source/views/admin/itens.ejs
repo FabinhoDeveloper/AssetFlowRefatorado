@@ -318,16 +318,16 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
-        <form id="editItemForm">
-            <input type="hidden" id="editItemId">
+        <form id="editItemForm" action="/admin/itens/editar" method="post">
+            <input type="hidden" id="editItemId" name="itemId">
             <div class="row mb-3">
                 <div class="col-md-6">
                 <label for="editItemName" class="form-label">Nome do Item</label>
-                <input type="text" class="form-control" id="editItemName">
+                <input type="text" class="form-control" id="editItemName" name="nome">
                 </div>
                 <div class="col-md-6">
                 <label for="editItemCategory" class="form-label">Categoria</label>
-                <select class="form-select" id="editItemCategory">
+                <select class="form-select" id="editItemCategory" name="categoria">
                     <option value="" selected disabled>Selecione uma categoria</option>
                     <option value="Computador">Computador</option>
                     <option value="Periférico">Periférico</option>
@@ -340,41 +340,37 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                 <label for="editItemSerial" class="form-label">Número de Série</label>
-                <input type="text" class="form-control" id="editItemSerial">
+                <input type="text" class="form-control" id="editItemSerial" name="numeroSerie">
                 </div>
                 <div class="col-md-6">
                 <label for="editItemValue" class="form-label">Valor</label>
                 <div class="input-group">
                     <span class="input-group-text">R$</span>
-                    <input type="number" class="form-control" id="editItemValue" step="0.01" min="0">
+                    <input type="number" class="form-control" id="editItemValue" step="0.01" min="0" name="valor">
                 </div>
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col-md-6">
-                <label for="editItemAssigned" class="form-label">Atribuído A</label>
-                <input type="text" class="form-control" id="editItemAssigned">
-                </div>
-                <div class="col-md-6">
                 <label for="editItemLocation" class="form-label">Localidade</label>
-                <input type="text" class="form-control" id="editItemLocation">
+                <input type="text" class="form-control" id="editItemLocation" name="local">
                 </div>
             </div>
             <div class="mb-3">
                 <label for="editItemDescription" class="form-label">Descrição</label>
-                <textarea class="form-control" id="editItemDescription" rows="3"></textarea>
+                <textarea class="form-control" id="editItemDescription" rows="3" name="descricao"></textarea>
             </div>
             <div class="row mb-3">
                 <div class="col-md-6">
                 <label for="editItemPurchaseDate" class="form-label">Data de Aquisição</label>
-                <input type="date" class="date form-control" id="editItemPurchaseDate">
+                <input type="date" class="date form-control" id="editItemPurchaseDate" name="dataDeCompra">
                 </div>
             </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary" id="updateItemBtn">Atualizar Item</button>
+          </div>
         </form>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-primary" id="updateItemBtn">Atualizar Item</button>
     </div>
     </div>
 </div>
@@ -401,11 +397,10 @@ document.querySelectorAll('[data-bs-target="#editItemModal"]').forEach(button =>
         document.getElementById('editItemCategory').value = row.cells[1].textContent.trim();
         document.getElementById('editItemSerial').value = row.cells[2].textContent;
         document.getElementById('editItemDescription').value = row.cells[3].textContent;
-        document.getElementById('editItemAssigned').value = row.cells[4].textContent;
-        document.getElementById('editItemLocation').value = row.cells[5].textContent;
-        document.getElementById('editItemValue').value = row.cells[6].textContent.replace('R$ ', '').trim();
+        document.getElementById('editItemLocation').value = row.cells[4].textContent;
+        document.getElementById('editItemValue').value = row.cells[5].textContent.replace('R$ ', '').trim();
         
-        const displayedDate = row.cells[7].textContent;
+        const displayedDate = row.cells[6].textContent;
         document.getElementById('editItemPurchaseDate').value = convertToDateInputFormat(displayedDate)});
 });
 
@@ -415,36 +410,36 @@ function convertToDateInputFormat(displayedDate) {
     return `${year}-${month}-${day}`;
 }
 
-// Atualizar item
-document.getElementById("updateItemBtn").addEventListener('click', async (e) => {
-    e.preventDefault();
+// // Atualizar item
+// document.getElementById("updateItemBtn").addEventListener('click', async (e) => {
+//     e.preventDefault();
 
-    const itemId = document.getElementById('editItemId').value;
+//     const itemId = document.getElementById('editItemId').value;
 
-    const itemData = {
-        itemName: document.getElementById('editItemName').value,
-        category: document.getElementById('editItemCategory').value,
-        serialNumber: document.getElementById('editItemSerial').value,
-        value: document.getElementById('editItemValue').value,
-        assignedTo: document.getElementById('editItemAssigned').value,
-        location: document.getElementById('editItemLocation').value,
-        description: document.getElementById('editItemDescription').value,
-        purchaseDate: document.getElementById('editItemPurchaseDate').value
-    };
+//     const itemData = {
+//         itemName: document.getElementById('editItemName').value,
+//         category: document.getElementById('editItemCategory').value,
+//         serialNumber: document.getElementById('editItemSerial').value,
+//         value: document.getElementById('editItemValue').value,
+//         assignedTo: document.getElementById('editItemAssigned').value,
+//         location: document.getElementById('editItemLocation').value,
+//         description: document.getElementById('editItemDescription').value,
+//         purchaseDate: document.getElementById('editItemPurchaseDate').value
+//     };
     
-    try {
-        const res = await axios.put(`/item/${itemId}`, itemData);
-        if (res.data.success) {
-            alert("Item atualizado com sucesso!");
-            window.location.reload();
-        } else {
-            alert("Erro ao atualizar item: " + (res.data.message || ''));
-        }
-    } catch (err) {
-        console.error('Erro ao atualizar:', err);
-        alert("Erro ao atualizar item! Detalhes no console.");
-    }
-});
+//     try {
+//         const res = await axios.put(`/item/${itemId}`, itemData);
+//         if (res.data.success) {
+//             alert("Item atualizado com sucesso!");
+//             window.location.reload();
+//         } else {
+//             alert("Erro ao atualizar item: " + (res.data.message || ''));
+//         }
+//     } catch (err) {
+//         console.error('Erro ao atualizar:', err);
+//         alert("Erro ao atualizar item! Detalhes no console.");
+//     }
+// });
 
 // Deletar Item
 async function excluirItem(id) {

@@ -12,8 +12,6 @@ async function listarItensPorWorkspace(workspaceId) {
 }
 
 async function criarItem(workspaceId, nome, descricao, categoria, numeroSerie, local, valor, dataDeCompra) {
-   console.log(workspaceId, nome, descricao, categoria, numeroSerie, local, valor, dataDeCompra);
-
     const novoItem = await prisma.item.create({
         data: {
             nome,
@@ -41,6 +39,9 @@ async function excluirItem(id) {
 }
 
 async function atualizarItem(id, nome, descricao, local, categoria, numeroSerie, valor, dataDeCompra) {
+    const [ano, mes, dia] = dataDeCompra.split('-');
+    const dataCorrigida = new Date(Number(ano), Number(mes) - 1, Number(dia));
+
     const item = await prisma.item.update({
         where: { id },
         data: {
@@ -50,7 +51,7 @@ async function atualizarItem(id, nome, descricao, local, categoria, numeroSerie,
             categoria,
             numeroSerie,
             valor,
-            dataDeCompra
+            dataDeCompra: dataCorrigida
         }
     });
 

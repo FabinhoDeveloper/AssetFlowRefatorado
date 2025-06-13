@@ -21,7 +21,6 @@ async function atualizarPerfil(id, primeiroNome, ultimoNome, email) {
         }
     });
 
-    console.log({ mensagem: 'Perfil atualizado na service', perfilAtualizado });
     return perfilAtualizado;
 }
 

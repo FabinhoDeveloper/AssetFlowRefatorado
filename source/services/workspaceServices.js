@@ -35,7 +35,7 @@ async function criarWorkspace(usuarioId, nome, descricao, cor) {
 }
 
 async function excluirWorkspace(id) {
-    await prisma.workspace.delete({
+    const workspace = await prisma.workspace.delete({
         where: { id }
     });
 
